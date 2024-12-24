@@ -7,17 +7,15 @@
 
 import Foundation
 
-class ServicesProvider {
 
-//    @InstantServiceWrapper(serviceFactory: UserIdProviderFactory())
-//    var userIdProvider
-//
-//    @LazyServiceWrapper(serviceFactory: DatabaseFactory(userIdProvider: $userIdProvider))
-//    var database
-//
-//    lazy var favoritesRepository = LazyServiceWrapper(
-//        serviceFactory: FavoritesRepositoryFactory(dbServiceProvider: $database)
-//    )
+let servicesProvider = ServicesProvider()
 
-    init {}
-}
+servicesProvider.prepareForNewUserId("1")
+
+print(servicesProvider.cartService.description)
+print("\n\n")
+
+servicesProvider.prepareForNewUserId("2")
+
+print("\n\n")
+print(servicesProvider.cartService.description)

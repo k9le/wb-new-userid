@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 protocol IServiceFactory<ReturnType> {
     associatedtype ReturnType
@@ -15,10 +16,6 @@ protocol IServiceFactory<ReturnType> {
 protocol IServiceProvider<ReturnType> {
     associatedtype ReturnType
     var instance: ReturnType { get }
-}
-
-protocol IServiceKiller {
-    func killService()
 }
 
 class AbstractServiceRef<T, TFactory: IServiceFactory<T>>{
@@ -47,8 +44,8 @@ extension AbstractServiceRef: IServiceProvider {
     }
 }
 
-extension AbstractServiceRef: IServiceKiller {
-    func killService() {
+extension AbstractServiceRef: Cancellable {
+    func cancel() {
         _service = createInstantly ? createService() : nil
     }
 }
@@ -65,8 +62,6 @@ final class InstantServiceRef<T, TFactory: IServiceFactory<T>>: AbstractServiceR
     }
 }
 
-
-@propertyWrapper
 struct InstantServiceWrapper<T, TFactory: IServiceFactory<T>> {
 
     private let serviceRef: InstantServiceRef<T, TFactory>
@@ -75,16 +70,20 @@ struct InstantServiceWrapper<T, TFactory: IServiceFactory<T>> {
         self.serviceRef = .init(serviceFactory: serviceFactory)
     }
 
-    var wrappedValue: T {
+    var service: T {
         serviceRef.instance
     }
 
-    var projectedValue: some IServiceProvider<T> {
+    var provider: some IServiceProvider<T> {
         serviceRef
+    }
+
+    func store(in bag: inout Set<AnyCancellable>) -> Self {
+        serviceRef.store(in: &bag)
+        return self
     }
 }
 
-@propertyWrapper
 struct LazyServiceWrapper<T, TFactory: IServiceFactory<T>> {
 
     private let serviceRef: LazyServiceRef<T, TFactory>
@@ -93,11 +92,16 @@ struct LazyServiceWrapper<T, TFactory: IServiceFactory<T>> {
         self.serviceRef = .init(serviceFactory: serviceFactory)
     }
 
-    var wrappedValue: T {
+    var service: T {
         serviceRef.instance
     }
 
-    var projectedValue: some IServiceProvider<T> {
+    var provider: some IServiceProvider<T> {
         serviceRef
+    }
+
+    func store(in bag: inout Set<AnyCancellable>) -> Self {
+        serviceRef.store(in: &bag)
+        return self
     }
 }

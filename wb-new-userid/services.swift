@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol IUserIdProvider {
+protocol IUserIdProvider: AnyObject {
     var userId: String { get set }
 }
 
@@ -15,52 +15,104 @@ class UserIdProvider: IUserIdProvider {
     var userId: String = ""
 }
 
-protocol IDatabase {}
+protocol IDatabase: AnyObject {
+    var description: String { get }
+}
 
 class Database: IDatabase {
-    var dbpath: String
+    var description: String
     init(_ userIdProvider: IUserIdProvider) {
-        dbpath = "db_\(userIdProvider.userId)"
-        print("DB \(dbpath) created")
+        description = "db_\(userIdProvider.userId)"
+        print("\(NSStringFromClass(type(of: self))) \(description) created")
+    }
+
+    deinit {
+        print("\(NSStringFromClass(type(of: self))) \(description) destroyed")
     }
 }
 
-protocol IFavoritesRepository {}
+protocol IFavoritesRepository: AnyObject {
+    var description: String { get }
+}
 
 class FavoritesRepository: IFavoritesRepository {
+    var description: String
+
     init(dbService: IDatabase) {
-        print("\(NSStringFromClass(type(of: self))) created")
+        description = "fr_" + dbService.description
+        print("\(NSStringFromClass(type(of: self))) \(description) created")
+    }
+
+    deinit {
+        print("\(NSStringFromClass(type(of: self))) \(description) destroyed")
     }
 }
 
-protocol IProductsRepository {}
+protocol IProductsRepository: AnyObject {
+    var description: String { get }
+}
 
 class ProductsRepository: IProductsRepository {
+    var description: String
+
     init(dbService: IDatabase) {
-        print("\(NSStringFromClass(type(of: self))) created")
+        description = "pr_" + dbService.description
+        print("\(NSStringFromClass(type(of: self))) \(description) created")
+    }
+
+    deinit {
+        print("\(NSStringFromClass(type(of: self))) \(description) destroyed")
     }
 }
 
-protocol IFavoritesService {}
+protocol IFavoritesService: AnyObject {
+    var description: String { get }
+}
 
 class FavoritesService: IFavoritesService {
+    var description: String
+
     init(favoritesRepository: IFavoritesRepository) {
-        print("\(NSStringFromClass(type(of: self))) created")
+        description = "fs_" + favoritesRepository.description
+        print("\(NSStringFromClass(type(of: self))) \(description) created")
+    }
+
+    deinit {
+        print("\(NSStringFromClass(type(of: self))) \(description) destroyed")
     }
 }
 
-protocol IProfileService {}
+protocol IProfileService: AnyObject {
+    var description: String { get }
+}
 
 class ProfileService: IProfileService {
+    var description: String
+
     init(favoriteService: IFavoritesService) {
-        print("\(NSStringFromClass(type(of: self))) created")
+        description = "ps_" + favoriteService.description
+
+        print("\(NSStringFromClass(type(of: self))) \(description) created")
+    }
+
+    deinit {
+        print("\(NSStringFromClass(type(of: self))) \(description) destroyed")
     }
 }
 
-protocol ICartService {}
+protocol ICartService: AnyObject {
+    var description: String { get }
+}
 
 class CartService: ICartService {
+    var description: String
+
     init(profileService: IProfileService, productsRepository: IProductsRepository) {
-        print("\(NSStringFromClass(type(of: self))) created")
+        description = "cart_" + profileService.description
+        print("\(NSStringFromClass(type(of: self))) \(description) created")
+    }
+
+    deinit {
+        print("\(NSStringFromClass(type(of: self))) \(description) destroyed")
     }
 }
