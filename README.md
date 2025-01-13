@@ -1,4 +1,4 @@
-В текущей конфигурации, для добавления еще одного сервиса в ServicesProvider нужно добавить два проперти:
+В текущей конфигурации, для добавления еще одного сервиса в ServicesProvider нужно добавить три проперти:
 
 ```swift
     private var $cartService: some IServiceProvider<ICartService> { cartServiceWrapper.provider }
