@@ -1,9 +1,8 @@
 В текущей конфигурации, для добавления еще одного сервиса в ServicesProvider нужно добавить два проперти:
 
 ```swift
-    // var $profileService: some IServiceProvider<IProfileService> { profileServiceWrapper.provider }
-    // var $productRepository: some IServiceProvider<IProductRepository> { productsRepositoryWrapper.provider }
-
+    private var $cartService: some IServiceProvider<ICartService> { cartServiceWrapper.provider }
+    
     private lazy var cartServiceWrapper = LazyServiceWrapper(
         serviceFactory: CartServiceFactory(
             profileServiceProvider: profileServiceWrapper.provider,
